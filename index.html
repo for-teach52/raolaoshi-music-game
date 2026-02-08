@@ -334,7 +334,7 @@
 
     <script>
         // 1. 游戏核心数据定义
-// 乐器库（使用GitHub Pages链接，解决跨域播放问题）
+       // 乐器库（使用GitHub Pages链接，解决跨域播放问题）
 const instrumentLibrary = {
   钢琴: {
       name: "钢琴",
@@ -370,6 +370,24 @@ const instrumentLibrary = {
       name: "唢呐",
       audioUrl: "https://for-teach52.github.io/raolaoshi-music-game/suona.mp3",
       desc: "唢呐是中国民族吹管乐器的一种，音色高亢、嘹亮，穿透力极强，常用于民间婚丧嫁娶、节庆典礼等场合，是极具特色的民间乐器。"
+  },
+  // 新增：口风琴
+  口风琴: {
+      name: "口风琴",
+      audioUrl: "https://for-teach52.github.io/raolaoshi-music-game/harmonica.mp3",
+      desc: "口风琴是一种结合了键盘和吹奏的乐器，体积小巧、音色明亮，操作简单，非常适合儿童音乐启蒙，既能独奏也能合奏。"
+  },
+  // 新增：萨克斯
+  萨克斯: {
+      name: "萨克斯",
+      audioUrl: "https://for-teach52.github.io/raolaoshi-music-game/saxphone.mp3",
+      desc: "萨克斯是一种木管乐器，兼具铜管乐器的嘹亮和木管乐器的柔和，音色丰富多变，广泛应用于爵士、流行、古典等音乐风格。"
+  },
+  // 新增：葫芦丝
+  葫芦丝: {
+      name: "葫芦丝",
+      audioUrl: "https://for-teach52.github.io/raolaoshi-music-game/hulusi.mp3",
+      desc: "葫芦丝又称“葫芦箫”，是中国云南少数民族特色乐器，音色轻柔细腻、圆润质朴，擅长演奏抒情的民间曲调。"
 	    }
 	};
 
@@ -380,6 +398,7 @@ const instrumentLibrary = {
         let currentInstrument = null; // 当前答题的乐器
         let isAnswered = false; // 是否已经答题
         let audioPlayer = new Audio(); // 音频播放器
+        let usedInstruments = []; // 新增：记录已出过题的乐器（避免重复）
 
         // 2. DOM元素获取
         const startBtn = document.getElementById('startBtn');
@@ -397,11 +416,17 @@ const instrumentLibrary = {
         const restartBtn = document.getElementById('restartBtn');
 
         // 3. 工具函数
-        // 随机获取一个乐器
+        // 随机获取一个乐器（确保不重复）
         function getRandomInstrument() {
-            const instrumentNames = Object.keys(instrumentLibrary);
-            const randomIndex = Math.floor(Math.random() * instrumentNames.length);
-            return instrumentLibrary[instrumentNames[randomIndex]];
+    	const instrumentNames = Object.keys(instrumentLibrary);
+    	// 过滤掉已使用过的乐器，得到可用乐器列表
+    	const availableInstruments = instrumentNames.filter(name => !usedInstruments.includes(name));
+    	// 从可用乐器中随机选一个
+    	const randomIndex = Math.floor(Math.random() * availableInstruments.length);
+    	const selectedName = availableInstruments[randomIndex];
+    	// 把选中的乐器加入“已使用”列表
+    	usedInstruments.push(selectedName);
+    	return instrumentLibrary[selectedName];
         }
 
         // 生成选项（1个正确+3个错误）
@@ -530,6 +555,7 @@ const instrumentLibrary = {
         function resetGame() {
             currentScore = 0;
             currentQuestionNum = 1;
+            usedInstruments = []; // 新增：重置已使用乐器列表（重新开始时不重复）
             scoreElement.textContent = 0;
             resultArea.classList.add('hidden');
             renderQuestion();
